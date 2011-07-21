@@ -1,4 +1,7 @@
 <?php
+    
+  # requires https://github.com/bolstad/wp-tagliatelle
+  $taggy = new Tagliatelle; 
 
   $escenic_source = '000002_migration_article.xml';
   echo "Hello \n";
