@@ -19,11 +19,9 @@
             {            
                 $postobj = array();                
                 $type = $content_piece->attributes()->type;
+                $postobj['post_date'] = $content_piece->attributes()->publishdate;
                 if ($type == 'article')
                         {
-#                                        print_r($content_piece);
- #               die;
-
                             print $content_piece->uri . "\n";                   
                             print "state : " .  $content_piece->attributes()->state . "\n";
                             echo "Yay, found an article\n";
