@@ -71,13 +71,11 @@
                                                 {
                                                     if (gettype($line) == 'object')
                                                         {
-#                                                            var_dump(get_object_vars($line));
                                                             # the original web article + xml got paragraphs, so we are adding them aswell                                                   
                                                             $thetext .= "<p>$line</p>\n";
                                                         }
                                                         else
                                                         {
-#                                                            print_r($line);
                                                             echo gettype($line);
                                                         }
                                                 }
@@ -107,9 +105,7 @@
                                         }
                                                                 
                                 }                                
-#                       
 
-                           
                             print_r($postobj);      
                             $sourceid = (string)$content_piece->attributes()->sourceid;
                             
