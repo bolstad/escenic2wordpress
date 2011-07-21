@@ -23,7 +23,6 @@
             wp_reset_query();   
             return $superid;                
     }
-    
       
     function toArray($data) {
         if (is_object($data)) $data = get_object_vars($data);
