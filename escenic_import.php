@@ -35,7 +35,7 @@
     }
 
     function replace_newline($string) {
-      return (string)str_replace(array("\r", "\r\n", "\n"), '', $string);
+      return (string)str_replace(array("\r", "\r\n", "\n"), ' ', $string);
     }
     
   if (file_exists($escenic_source)) 
@@ -45,8 +45,12 @@
             {            
                 $postobj = array();                
                 $type = $content_piece->attributes()->type;
-                $postobj['post_date'] = $content_piece->attributes()->publishdate;
-                if ($type == 'article')
+                $state = $content_piece->attributes()->state;
+                $postobj['post_date'] = (string)$content_piece->attributes()->publishdate;
+                $postobj['post_type'] = 'artikel';                
+                $postobj['post_status'] = 'publish';
+                print "state: '$state'\n";
+                if (($type == 'article') and ($state == 'published'))
                         {
                             print $content_piece->uri . "\n";                   
                             print "state : " .  $content_piece->attributes()->state . "\n";
@@ -57,7 +61,7 @@
                                     # the_content
                                     if ($article_field->attributes()->name == 'headline')
                                     {
-                                        $postobj['the_title'] = replace_newline($article_field[0]);
+                                        $postobj['post_title'] = replace_newline($article_field[0]);
                                     }
 
                                     if ($article_field->attributes()->name == 'body')
@@ -88,27 +92,46 @@
                                             foreach ($article_field->p as $line)
                                                 {
                                                 
+                                                    # the excerpt got some bold words in it, make sure to fidn hose
                                                     if ($keys = array_keys(get_object_vars($line)))
                                                         {
-                                                            print_r($keys);
                                                             foreach ($keys as $key)
                                                                 {
-                                                                    $post_excerpt .= "<$key>". $line->$key. "</$key>\n";
-                                                                    
+                                                                    $post_excerpt .= "<$key>". $line->$key. "</$key>\n";                                                                    
                                                                 }
                                                         }
-
-                                                    # the original web article + xml got paragraphs, so we are adding them aswell                                                   
-                                                    $post_excerpt .= "<p>$line</p>\n";
+                                                    # the original web article + xml got paragraphs, so we are adding them aswell                                                                                                           
+                                                    $post_excerpt .= "<p>$line</p>";
                                                 }
                                            $postobj['post_excerpt'] = $post_excerpt ;
                                         }
                                                                 
-                                }
-                                
-#                           print_r($content_piece);        
+                                }                                
+#                       
+
+                           
                             print_r($postobj);      
-                            die;
+                            $sourceid = (string)$content_piece->attributes()->sourceid;
+                            
+                            # skip it if the sourceid contains '-orig' (to avoid dupes, we only want the version without -orig suffix
+                            $pos = strpos($sourceid, '-orig');
+                            if ($pos === false) 
+                            {        
+                                    if ($oldie = find_tagged_post('sourceid',$sourceid))
+                                        {
+                                            echo "Found an old post with the sourceid $sourceid, updating instead of inserting\n";
+                                            $postobj['ID'] = $oldie;
+                                        }                                                                    
+                                    print "sourceid : $sourceid\n";                           
+                                    $newid =   wp_insert_post( $postobj );                                
+                                    update_post_meta($newid, 'sourceid', $sourceid); 
+                                    update_post_meta($newid, 'ingress',$postobj['post_excerpt'] );                 
+                                    echo "inserted as $newid \n";
+                            }
+                            else
+                            {
+                                echo "Just a old copy, skipping $sourceid ... \n";
+                            }
                         }
     
             }
