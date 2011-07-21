@@ -26,8 +26,8 @@
                                         {
                                             foreach ($article_field->p as $line)
                                                 {
-                                                    print "$line\n";                                                            
-                                                    $thetext .= $line . "\n";
+                                                    # the original web article + xml got paragraphs, so we are adding them aswell                                                   
+                                                    $thetext .= "<p>$line</p>\n";
                                                 }
                                            $postobj['post_content'] = $thetext ;
 
