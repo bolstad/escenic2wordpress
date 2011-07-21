@@ -2,7 +2,29 @@
 
   $escenic_source = '000002_migration_article.xml';
   echo "Hello \n";
-  
+
+    function find_tagged_post($tag,$value,$title = '')
+    {
+            $superid = null;
+            query_posts( array( 'posts_per_page' => '1',
+                             'post_type' => 'artikel',
+                             'meta_key'=>$tag,
+                             'meta_value'=>$value,
+                             'orderby'=>'meta_value_num',
+                             'order'=>'DESC' ) );
+            global $wp_query;
+            print_r($wp_query);                 
+            if (have_posts()) :
+                    while (have_posts()) :
+                                                    the_post();
+                                                    $superid = get_the_ID();
+                    endwhile;
+            endif;
+            wp_reset_query();   
+            return $superid;                
+    }
+    
+      
     function toArray($data) {
         if (is_object($data)) $data = get_object_vars($data);
         return is_array($data) ? array_map(__FUNCTION__, $data) : $data;
