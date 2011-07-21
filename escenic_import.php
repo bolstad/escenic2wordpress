@@ -1,5 +1,7 @@
 <?php
     
+  require "../../wp-load.php";
+  
   # requires https://github.com/bolstad/wp-tagliatelle
   $taggy = new Tagliatelle; 
 
