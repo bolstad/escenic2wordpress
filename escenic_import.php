@@ -12,15 +12,34 @@
     {
         $xml = simplexml_load_file($escenic_source); 
         foreach ($xml->content as $content_piece)
-            {
-            
-#                print_r($content_piece);
-                print $content_piece->uri . "\n";
-                    
-                print "Type : " .  $content_piece->attributes()->type . "\n";
-                print "state : " .  $content_piece->attributes()->state . "\n";
-                                            
+            {            
+                $postobj = array();                
+                $type = $content_piece->attributes()->type;
+                if ($type == 'article')
+                        {
+                            print $content_piece->uri . "\n";                   
+                            print "state : " .  $content_piece->attributes()->state . "\n";
+                            echo "Yay, found an article\n";
+                            foreach ($content_piece->field as $article_field)
+                                {
+                                    if ($article_field->attributes()->name == 'body')
+                                        {
+                                            foreach ($article_field->p as $line)
+                                                {
+                                                    print "$line\n";                                                            
+                                                    $thetext .= $line . "\n";
+                                                }
+                                           $postobj['post_content'] = $thetext ;
 
+                                        }
+                                                                
+                                }
+                                
+#                           print_r($content_piece);        
+                            print_r($postobj);      
+                            die;
+                        }
+    
             }
     } 
         else 
